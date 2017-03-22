@@ -79,14 +79,17 @@ public class UpgradedNeuralNetwork {
 
 	public static void main(String[] args) {
 		System.out.println("NEURAL NETWORK TEST:\n-------------------");
-
-		double[][] INPUT_VALUES = {{0,0,1},{0,1,1},{1,0,1},{1,1,1},{0.5,0.6,0.2}};
-		double[][] OUTPUT_VALUES = {{0},{1},{1},{0},{0.4}};
+		
+		//training information
+		double[][] INPUT_VALUES = {{0,0,1},{0,1,1},{1,0,1},{1,1,1},{1,0,0},{0,0,0},{0.5,0.6,0.2}};
+		double[][] OUTPUT_VALUES = {{0},{1},{1},{0},{0},{1},{0.4}};
+		
+		//settings
+		double[] NEW_VALUE = {0,0,0};
 		int iterations = 50000;
-		int inputNodes = INPUT_VALUES[0].length;
-		int neuronsInMiddleLayer = 5;
+		int neuronsInMiddleLayer = 15;
 
-		double[][] synapse0 = synapseLayer(inputNodes,neuronsInMiddleLayer);
+		double[][] synapse0 = synapseLayer(INPUT_VALUES[0].length,neuronsInMiddleLayer);
 		//{{-0.16595599,0.44064899,-0.99977125,-0.39533485},{-0.70648822 ,-0.81532281,-0.62747958,-0.30887855},{-0.20646505,0.07763347 ,-0.16161097,0.370439}};
 		double[][] synapse1 = synapseLayer(neuronsInMiddleLayer,1);
 		//{{-0.5910955},{0.75623487},{-0.94522481},{0.34093502}};
@@ -138,8 +141,9 @@ public class UpgradedNeuralNetwork {
 
 			if (runs==iterations) {
 				//RUN PREDICTION WITH GIVEN ARRAY
-				double[][] newData = {{1,1,1}};
+				double[][] newData = {NEW_VALUE};
 				rawLayer1 = matrixMult(newData,synapse0);
+				print("yay",synapse0);
 				layer1 = new double[rawLayer1.length][rawLayer1[0].length];
 				for (int i = 0;i<rawLayer1.length;i++) {
 					for (int j = 0;j<rawLayer1[0].length;j++) {
