@@ -115,7 +115,7 @@ public class NeuralNetwork {
 			}
 		}
 		System.out.println("Data Set: " + Arrays.toString(NEW_VALUE));
-		System.out.println("Predicted Result: " + finalLayer[0][0]);
+		System.out.println("Predicted Result: " + Arrays.toString(finalLayer[0]));
 	}
 
 
@@ -125,7 +125,6 @@ public class NeuralNetwork {
 		double[][] OUTPUT_VALUES = {{0},{1},{1},{0},{0},{1},{0.4},{0.85}};
 
 		//settings
-		double[] NEW_VALUE = {0,1,1};
 		int iterations = 120000;
 		int hiddenNeuronsPerLayer = 10;
 
@@ -133,6 +132,7 @@ public class NeuralNetwork {
 		a.trainNetwork();
 		for (int i = 0;i<INPUT_VALUES.length;i++) {
 			a.predict(INPUT_VALUES[i]);
+			System.out.println("");
 		}
 		
 
