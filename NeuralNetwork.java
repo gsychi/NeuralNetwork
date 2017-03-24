@@ -58,7 +58,7 @@ public class NeuralNetwork {
 					sigmoidDerivativeForfinalLayer[i][j] = mxjava.sigmoidPackage(finalLayer[i][j],true);
 				}
 			}
-			double[][] finalLayerDelta = mxjava.arrayMult(finalLayerError,sigmoidDerivativeForfinalLayer);
+			double[][] finalLayerDelta = mxjava.scalarMult(finalLayerError,sigmoidDerivativeForfinalLayer);
 
 			//layer 2 delta
 			double[][] layer2Error = mxjava.matrixMult(finalLayerDelta,mxjava.transpose(finalSynapse));
@@ -68,7 +68,7 @@ public class NeuralNetwork {
 					sigmoidDerivativeForLayer2[i][j] = mxjava.sigmoidPackage(layer2[i][j],true);
 				}
 			}
-			double[][] layer2Delta = mxjava.arrayMult(layer2Error,sigmoidDerivativeForLayer2);
+			double[][] layer2Delta = mxjava.scalarMult(layer2Error,sigmoidDerivativeForLayer2);
 
 			//layer 1 delta
 			double[][] layer1Error = mxjava.matrixMult(layer2Delta,mxjava.transpose(synapse1));
@@ -78,7 +78,7 @@ public class NeuralNetwork {
 					sigmoidDerivativeForLayer1[i][j] = mxjava.sigmoidPackage(layer1[i][j],true);
 				}
 			}
-			double[][] layer1Delta = mxjava.arrayMult(layer1Error,sigmoidDerivativeForLayer1);
+			double[][] layer1Delta = mxjava.scalarMult(layer1Error,sigmoidDerivativeForLayer1);
 
 
 			double[][] finalWeight = mxjava.matrixMult(mxjava.transpose(layer2),finalLayerDelta);
@@ -138,3 +138,4 @@ public class NeuralNetwork {
 
 	}
 }
+
