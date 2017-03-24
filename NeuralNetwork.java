@@ -9,22 +9,24 @@ public class NeuralNetwork {
 	double[][] finalSynapse;
 	double[][] INPUT_VALUES;
 	double[][] OUTPUT_VALUES;
-	int iterations;
 	int hiddenLayer1;
 
-	public NeuralNetwork(double[][] a, double[][] b, int c, int d) {
+	public NeuralNetwork(double[][] a, double[][] b, int d) {
 		INPUT_VALUES=a;
 		OUTPUT_VALUES=b;
-		iterations=c;
 		hiddenLayer1=d;
 		synapse0 = mxjava.synapseLayer(a[0].length,d);
 		synapse1 = mxjava.synapseLayer(d,d);
 		finalSynapse = mxjava.synapseLayer(hiddenLayer1,OUTPUT_VALUES[0].length);
 	}
 
-	public void trainNetwork() {
-
-		for (int runs = 1;runs<=iterations;runs++) {
+	public void trainNetwork(int c) {
+		int iterations = c;
+		System.out.println("--BEGIN TRAINING--");
+		for (int runs = 0;runs<=(iterations-1);runs++) {
+			if (runs%(iterations/10) == 0) {
+				System.out.println("thinking...");
+			}
 			double[][] layer0 = INPUT_VALUES;
 			double[][] rawLayer1 = mxjava.matrixMult(layer0,synapse0);
 			double[][] layer1 = new double[rawLayer1.length][rawLayer1[0].length];
@@ -89,6 +91,7 @@ public class NeuralNetwork {
 			synapse1 = mxjava.add(synapse1,weight1);
 			synapse0 = mxjava.add(synapse0,weight0);
 		}
+		System.out.println("--END TRAINING--");
 	}
 	
 	public void predict(double[] NEW_VALUE) {
@@ -117,25 +120,5 @@ public class NeuralNetwork {
 		System.out.println("Data Set: " + Arrays.toString(NEW_VALUE));
 		System.out.println("Predicted Result: " + Arrays.toString(finalLayer[0]));
 	}
-
-
-	public static void main(String[] args) {
-		//training information
-		double[][] INPUT_VALUES = {{0,0,1},{0,1,1},{1,0,1},{1,1,1},{1,0,0},{0,0,0},{0.5,0.6,0.2},{0.4,0.5,0.2}};
-		double[][] OUTPUT_VALUES = {{0},{1},{1},{0},{0},{1},{0.4},{0.85}};
-
-		//settings
-		int iterations = 120000;
-		int hiddenNeuronsPerLayer = 10;
-
-		NeuralNetwork a = new NeuralNetwork(INPUT_VALUES,OUTPUT_VALUES,iterations,hiddenNeuronsPerLayer);
-		a.trainNetwork();
-		for (int i = 0;i<INPUT_VALUES.length;i++) {
-			a.predict(INPUT_VALUES[i]);
-			System.out.println("");
-		}
 		
-
-	}
 }
-
