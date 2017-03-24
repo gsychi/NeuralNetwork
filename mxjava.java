@@ -30,7 +30,7 @@ public class mxjava {
 		}
 		return newMatrix;
 	}
-	public static double[][] arrayMult(double[][]firstMatrix,double[][]secondMatrix) {
+	public static double[][] scalarMult(double[][]firstMatrix,double[][]secondMatrix) {
 		double[][] newMatrix = new double[firstMatrix.length][secondMatrix[0].length];
 		for (int i = 0; i < newMatrix.length; i++) { 
 			for (int j = 0; j < newMatrix[0].length; j++) { 
