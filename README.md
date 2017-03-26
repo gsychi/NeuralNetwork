@@ -7,3 +7,4 @@ The part I've added is the MultiLayer Neural Network - which has 2 Hidden Layers
 <br>
 <br>
 Future projects based on this will come out in the near future, stay tuned.
+<br> #1 Boring Project: Language Predictor!
