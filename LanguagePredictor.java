@@ -12,7 +12,8 @@ public class LanguagePredictor {
 
 	private static BufferedReader buffer;
 	public static void main(String[] args) throws IOException {
-
+		
+		//You can have a different directory, if you so wish
 		String documents = System.getProperty ("user.home") + "/Documents/";
 		FileReader english = new FileReader (documents + "english.txt");
 		
