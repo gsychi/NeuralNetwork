@@ -13,26 +13,28 @@ public class LanguagePredictor {
 	private static BufferedReader buffer;
 	public static void main(String[] args) throws IOException {
 		
-		//You can have a different directory, if you so wish
-		String documents = System.getProperty ("user.home") + "/Documents/";
-		FileReader english = new FileReader (documents + "english.txt");
+		String[] languages = {"english", "chinese"};
 		
-		buffer = new BufferedReader(english);
+		String documents = System.getProperty ("user.home") + "/Documents/";
+		FileReader lang1 = new FileReader (documents + "english.txt");
+		
+		buffer = new BufferedReader(lang1);
 		ArrayList<String> wordInputBank = new ArrayList<String>();
-		ArrayList<Double> confidenceEng = new ArrayList<Double>();
-		ArrayList<Double> confidenceChin = new ArrayList<Double>();
+		ArrayList<Double> confidenceFirstLang = new ArrayList<Double>();
+		ArrayList<Double> confidenceSecondLang = new ArrayList<Double>();
+
 		String word;
 		while ((word = buffer.readLine()) != null) {
 			wordInputBank.add(word.toUpperCase());
-			confidenceEng.add((double) 1);
-			confidenceChin.add((double) 0);
+			confidenceFirstLang.add((double) 1);
+			confidenceSecondLang.add((double) 0);
 		}
-		FileReader chinese = new FileReader (documents + "chinese.txt");
-		buffer = new BufferedReader(chinese);
+		FileReader lang2 = new FileReader (documents + "chinese.txt");
+		buffer = new BufferedReader(lang2);
 		while ((word = buffer.readLine()) != null) {
 			wordInputBank.add(word.toUpperCase());
-			confidenceEng.add((double) 0);
-			confidenceChin.add((double) 1);
+			confidenceFirstLang.add((double) 0);
+			confidenceSecondLang.add((double) 1);
 		}
 		
 		int indivWordLength = wordInputBank.get(0).length();
@@ -71,34 +73,71 @@ public class LanguagePredictor {
 		//NOW FOR OUTPUT
 		double[][] CONFIDENCE = new double[wordBank.length][2];
 		for (int i = 0;i<CONFIDENCE.length;i++) {
-			CONFIDENCE[i][0] = confidenceEng.get(i);
-			CONFIDENCE[i][1] = confidenceChin.get(i);
+			CONFIDENCE[i][0] = confidenceFirstLang.get(i);
+			CONFIDENCE[i][1] = confidenceSecondLang.get(i);
 		}
 		
 		//settings
 		int hiddenNeuronsPerLayer = 15;
-		/*
+		String explanation = "ENGLISH ::: CHINESE. A higher first value denotes that the Network thinks it is English; a higher second value denotes that the Network thinks it is Chinese.";
+		
 		for (int i = 0;i<WORD_BANK_INPUT.length;i++) {
 			System.out.println(Arrays.toString(WORD_BANK_INPUT[i]));
 		}
-		*/
+		
 		String NEW_WORD = "XIANG";
 		double[] DATASET = process(NEW_WORD,indivWordLength);
 		NeuralNetwork a = new NeuralNetwork(WORD_BANK_INPUT,CONFIDENCE,hiddenNeuronsPerLayer);
-		a.trainNetwork(100000);
+		a.trainNetwork(10000);
 		//words analyzed
 		System.out.println("\nWORDS ANALYZED: " + WORD_BANK_INPUT.length+"\n\n");
 		
 		for (int i = 0;i<WORD_BANK_INPUT.length;i++) {
-			System.out.println("word: " + wordInputBank.get(i));
 			System.out.println("english to chinese probability:");
+			System.out.println("\nword: " + wordInputBank.get(i));
 			a.predict(WORD_BANK_INPUT[i],false);
 			System.out.println("ACTUAL: "+ Arrays.toString(CONFIDENCE[i]));
 			System.out.println("");
 		}
-		System.out.println("word: " + NEW_WORD);
+		System.out.println(explanation);
+		
+		System.out.println("\nword: " + NEW_WORD);
 		a.predict(DATASET, false);
-		System.out.println("ENGLISH ::: CHINESE. A higher first value denotes that the Network thinks it is English; a higher second value denotes that the Network thinks it is Chinese.");
+		
+		NEW_WORD = "HAPPY";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
+
+		NEW_WORD = "SHIAN";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
+		
+		NEW_WORD = "STONE";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
+		
+		NEW_WORD = "KAIMEN";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
+		
+		NEW_WORD = "WOMEN";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
+		
+		NEW_WORD = "DEMONS";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
+		
+		NEW_WORD = "TALON";
+		DATASET = process(NEW_WORD,indivWordLength);
+		System.out.println("\nword: " + NEW_WORD);
+		a.predict(DATASET, false);
 		
 	}
 	
@@ -106,7 +145,7 @@ public class LanguagePredictor {
 		word = word.toUpperCase();
 		double[] output = new double[indivWordLength];
 		int len = indivWordLength-word.length();
-		for (int j = 1;j<=indivWordLength;j++) {
+		for (int j = 1;j<=len;j++) {
 			word = word+"0";
 		}
 		String[] w = word.split("");
