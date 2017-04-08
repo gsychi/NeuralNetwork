@@ -6,8 +6,6 @@ faces
 exist
 habit
 knife
-merge
-named
 suffer
 lever
 query
