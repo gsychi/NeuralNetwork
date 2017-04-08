@@ -7,8 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
-public class LanguagePredictor {
+public class Main {
 
 	private static BufferedReader buffer;
 	public static void main(String[] args) throws IOException {
@@ -68,9 +69,7 @@ public class LanguagePredictor {
 				}
 			}
 		}
-		//Input Values are scaled to an array from 0 to 1.
 
-		//NOW FOR OUTPUT
 		double[][] CONFIDENCE = new double[wordBank.length][2];
 		for (int i = 0;i<CONFIDENCE.length;i++) {
 			CONFIDENCE[i][0] = confidenceFirstLang.get(i);
@@ -78,92 +77,94 @@ public class LanguagePredictor {
 		}
 
 		//settings
-		int hiddenNeuronsPerLayer = 15;
-		String explanation = "ENGLISH ::: CHINESE. A higher first value denotes that the Network thinks it is English; a higher second value denotes that the Network thinks it is Chinese.";
+		boolean printTrainingProgress = true;
+		int hiddenNeuronsPerLayer = 10;
+		
+		int test = 1;
+		while (test<=1) {
+			System.out.println("---\nTEST #" + test);
+			test++;
+			TwoLayerNeuralNetwork a = new TwoLayerNeuralNetwork(WORD_BANK_INPUT,CONFIDENCE,hiddenNeuronsPerLayer);
 
-		/*
-		for (int i = 0;i<WORD_BANK_INPUT.length;i++) {
-			System.out.println(Arrays.toString(WORD_BANK_INPUT[i]));
-		}
-		 */		
-		NeuralNetwork a = new NeuralNetwork(WORD_BANK_INPUT,CONFIDENCE,hiddenNeuronsPerLayer);
-		//words analyzed
-		System.out.println("\nWORDS ANALYZED: " + WORD_BANK_INPUT.length+"\n\n");
-
-		for (int trials = 0; trials<200;trials++) {
-			a.trainNetwork(500);
-			
-			
-			for (int i = 0;i<WORD_BANK_INPUT.length;i++) {
-				System.out.println("english to chinese probability:");
-				System.out.println("\nword: " + wordInputBank.get(i));
-				a.predict(WORD_BANK_INPUT[i],false);
-				System.out.println("ACTUAL: "+ Arrays.toString(CONFIDENCE[i]));
-				System.out.println("");
+			int deck[] = new int[WORD_BANK_INPUT.length];
+			for (int i = 0;i<deck.length;i++) {
+				deck[i] = i;
+			}			
+			for (int i = 0;i<deck.length;i++) {
+				int placement = (int) (Math.random()*deck.length);
+				int temp = deck[placement];
+				deck[placement] = deck[i];
+				deck[i] = temp;
 			}
-			System.out.println(explanation);
-			
-			String NEW_WORD = "XIANG";
-			double[] DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
+			int trainedWords = 0; //you choose
+			int newWords = 25;
+			int totalWords = newWords + trainedWords;
 
-			NEW_WORD = "HAPPY";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-
-			NEW_WORD = "SHIAN";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-
-			NEW_WORD = "STONE";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-
-			NEW_WORD = "TIRED";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-
-			NEW_WORD = "DEMON";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-
-			NEW_WORD = "CRAZY";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-			
-			NEW_WORD = "ZUGUO";
-			DATASET = process(NEW_WORD,indivWordLength);
-			System.out.println("\nword: " + NEW_WORD);
-			a.predict(DATASET, false);
-		}
-	}
-
-	private static double[] process(String word, int indivWordLength) {
-		word = word.toUpperCase();
-		double[] output = new double[indivWordLength];
-		int len = indivWordLength-word.length();
-		for (int j = 1;j<=len;j++) {
-			word = word+"0";
-		}
-		String[] w = word.split("");
-		String alphabetString = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		String[] ALPHABET = alphabetString.split("");
-		for (int j = 0;j<indivWordLength;j++) {
-			for (int k = 0;k<ALPHABET.length;k++) {
-				if (w[j].equals(ALPHABET[k])) {
-					double index = (double) k;
-					output[j] = index/26;
+			String[] totalTestWords = new String[totalWords]; // you choose
+			for (int i = 0;i<trainedWords;i++) {
+				totalTestWords[i] = wordInputBank.get(deck[i]);
+			}
+			FileReader unseen = new FileReader(documents + "unseen.txt");
+			buffer = new BufferedReader(unseen);
+			for (int i = trainedWords;i<totalTestWords.length;i++) {
+				word = buffer.readLine().toUpperCase();
+				totalTestWords[i] = word;
+			}
+			String[][] testWordBank = new String[totalTestWords.length][indivWordLength];
+			for (int i = 0;i<testWordBank.length;i++) {
+				String ab = totalTestWords[i].toUpperCase();
+				int length = indivWordLength-totalTestWords[i].length();
+				for (int j = 1;j<=length;j++) {
+					ab = ab+"0";
+				}
+				String[] w = ab.split("");
+				testWordBank[i] = w;
+			}
+			double[][] HOWCORRECT = new double[testWordBank.length][testWordBank[0].length];
+			for (int i = 0;i<HOWCORRECT.length;i++) {
+				for (int j = 0;j<testWordBank[0].length;j++) {
+					for (int k = 0;k<ALPHABET.length;k++) {
+						if (testWordBank[i][j].equals(ALPHABET[k])) {
+							double index = (double) k;
+							HOWCORRECT[i][j] = (double) (index/26.0);
+						}
+					}
 				}
 			}
-		}
+			double[][] NEW_WORDS_CONFIDENCE = new double[totalTestWords.length][2];
+			for (int i = 0;i<trainedWords;i++) {
+				NEW_WORDS_CONFIDENCE[i][0] = confidenceFirstLang.get(deck[i]);
+				NEW_WORDS_CONFIDENCE[i][1] = confidenceSecondLang.get(deck[i]);
+			}
+			FileReader unseenAns = new FileReader(documents + "unseenAnswers.txt");
+			buffer = new BufferedReader(unseenAns);
+			for (int i = trainedWords;i<totalTestWords.length;i++) {
+				String input = buffer.readLine();
+				int ca = Integer.parseInt(input);
+				NEW_WORDS_CONFIDENCE[i][0]=ca;
+				NEW_WORDS_CONFIDENCE[i][1]=1-ca;
+			}
 
-		return output;
+			for (int trials = 0; trials<50;trials++) {
+				a.trainNetwork(500);
+
+				if (printTrainingProgress) {
+					for (int i = 0;i<WORD_BANK_INPUT.length;i++) {
+						System.out.println("english to chinese probability:");
+						System.out.println("\nword: " + wordInputBank.get(i));
+						a.predict(WORD_BANK_INPUT[i], 0, false);
+						System.out.println("ACTUAL: "+ Arrays.toString(CONFIDENCE[i]));
+						System.out.println("");
+					}
+
+				}
+			}
+
+			for (int i = 0;i<NEW_WORDS_CONFIDENCE.length;i++) {
+				System.out.println("\n" + totalTestWords[i]+ "\nACTUAL:" + Arrays.toString(NEW_WORDS_CONFIDENCE[i])+"\nPREDICTION BY COMPUTER:");
+				a.predict(HOWCORRECT[i], NEW_WORDS_CONFIDENCE[i][0],true);
+			}
+			System.out.println("\n"+(a.correct/totalWords*100) + "% correct.");
+		}
 	}
 }
