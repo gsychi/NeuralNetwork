@@ -11,8 +11,9 @@ public class TwoLayerNeuralNetwork {
 	double[][] OUTPUT_VALUES;
 	double correct;
 	int hiddenLayer1;
+	double learningSpeed;
 
-	public TwoLayerNeuralNetwork(double[][] a, double[][] b, int d) {
+	public TwoLayerNeuralNetwork(double[][] a, double[][] b, int d, double e) {
 		INPUT_VALUES=a;
 		OUTPUT_VALUES=b;
 		hiddenLayer1=d;
@@ -20,6 +21,7 @@ public class TwoLayerNeuralNetwork {
 		synapse1 = mxjava.synapseLayer(d,d);
 		finalSynapse = mxjava.synapseLayer(hiddenLayer1,OUTPUT_VALUES[0].length);
 		correct = 0;
+		learningSpeed = e;
 	}
 
 	public void trainNetwork(int c) {
@@ -27,9 +29,9 @@ public class TwoLayerNeuralNetwork {
 		//System.out.println("--BEGIN TRAINING--");
 		for (int runs = 0;runs<=(iterations-1);runs++) {
 			/*
-			if (runs%(iterations/10) == 0) {
-				System.out.println("thinking...");
-			}
+				if (runs%(iterations/10) == 0) {
+					System.out.println("thinking...");
+				}
 			 */
 			double[][] layer0 = INPUT_VALUES;
 			double[][] rawLayer1 = mxjava.matrixMult(layer0,synapse0);
@@ -86,10 +88,34 @@ public class TwoLayerNeuralNetwork {
 			}
 			double[][] layer1Delta = mxjava.scalarMult(layer1Error,sigmoidDerivativeForLayer1);
 
-
+			
 			double[][] finalWeight = mxjava.matrixMult(mxjava.transpose(layer2),finalLayerDelta);
 			double[][] weight1 = mxjava.matrixMult(mxjava.transpose(layer1),layer2Delta);
 			double[][] weight0 = mxjava.matrixMult(mxjava.transpose(layer0),layer1Delta);
+			
+			//SCALE
+			double[][] scaleFinal = new double[finalWeight.length][finalWeight[0].length];
+			for  (int i = 0; i<scaleFinal.length;i++) {
+				for (int j = 0;j<scaleFinal[0].length;j++) {
+					scaleFinal[i][j] = learningSpeed;
+				}
+			}
+			double[][] scale1 = new double[weight1.length][weight1[0].length];
+			for  (int i = 0; i<scale1.length;i++) {
+				for (int j = 0;j<scale1[0].length;j++) {
+					scale1[i][j] = learningSpeed;
+				}
+			}
+			double[][] scale0 = new double[weight0.length][weight0[0].length];
+			for  (int i = 0; i<scale0.length;i++) {
+				for (int j = 0;j<scale0[0].length;j++) {
+					scale0[i][j] = learningSpeed;
+				}
+			}
+			
+			finalWeight = mxjava.scalarMult(finalWeight,scaleFinal);
+			weight1 = mxjava.scalarMult(weight1,scale1);
+			weight0 = mxjava.scalarMult(weight0,scale0);
 
 			finalSynapse = mxjava.add(finalSynapse,finalWeight);
 			synapse1 = mxjava.add(synapse1,weight1);
