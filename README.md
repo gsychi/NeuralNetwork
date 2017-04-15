@@ -1,6 +1,6 @@
 # NeuralNetwork
 <br>
-In no way am I actually qualified. Sad!
+This is a created neural network, written from a scratch as an attempt to learn the logic behind it.
 <br>
 <br>
 This takes advantage of mxjava, a Matrix Multiplication function library that I have created. Yay?
