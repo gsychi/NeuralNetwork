@@ -10,7 +10,6 @@ public class TwoLayerNeuralNetwork {
 	double[][] INPUT_VALUES;
 	double[][] OUTPUT_VALUES;
 	double correct;
-	int hiddenLayer1;
 	double learningSpeed;
 
 	public TwoLayerNeuralNetwork(double[][] a, double[][] b, int d, double e) {
@@ -19,7 +18,7 @@ public class TwoLayerNeuralNetwork {
 		hiddenLayer1=d;
 		synapse0 = mxjava.synapseLayer(a[0].length,d);
 		synapse1 = mxjava.synapseLayer(d,d);
-		finalSynapse = mxjava.synapseLayer(hiddenLayer1,OUTPUT_VALUES[0].length);
+		finalSynapse = mxjava.synapseLayer(d,OUTPUT_VALUES[0].length);
 		correct = 0;
 		learningSpeed = e;
 	}
