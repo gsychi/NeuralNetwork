@@ -9,22 +9,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class LanguageDetector2 {
+public class LanguagePredictor2 {
 
 	private static BufferedReader buffer;
 	public static void main(String[] args) throws IOException {
 
 		//settings
 		boolean printTrainingProgress = true;
-		int hiddenNeuronsPerLayer = 17; //15 works. 
+		int hiddenNeuronsPerLayer = 20;  
 		int trainedWords = 0;
 		int newWords = 50;
-		double learningRate = 0.1;
-		int iterations = 40000;
+		double learningRate = 0.05;
+		int iterations = 1000;
 
 		String[] languages = {"english", "chinese"};
 
-		String documents = System.getProperty ("user.home") + "/Documents/";
+		String documents = System.getProperty ("user.home") + "/Documents/Procrastination Box/";
 		FileReader lang1 = new FileReader (documents + "english.txt");
 
 		buffer = new BufferedReader(lang1);
@@ -158,13 +158,13 @@ public class LanguageDetector2 {
 		}
 
 		int test = 1;
-		while (test<=1) {
+		while (test<2) {
 			System.out.println("---\nTEST #" + test);
 			test++;
-			TwoLayerNeuralNetwork a = new TwoLayerNeuralNetwork(WORD_BANK_INPUT,CONFIDENCE,hiddenNeuronsPerLayer,learningRate);
+			NeuralNetwork a = new NeuralNetwork(WORD_BANK_INPUT,CONFIDENCE,hiddenNeuronsPerLayer,learningRate);
 
-			for (int trials = 0; trials<(iterations/500);trials++) {
-				a.trainNetwork(500);
+			for (int trials = 0; trials<(iterations/100);trials++) {
+				a.trainNetwork(100);
 
 				if (printTrainingProgress) {
 					for (int i = 0;i<WORD_BANK_INPUT.length;i++) {
@@ -175,6 +175,9 @@ public class LanguageDetector2 {
 
 				}
 			}
+			
+			//PREDICTIONS BEGIN
+			System.out.println("\nUNSEEN WORDS ---------------------\n");
 			for (int i = 0;i<NEW_WORDS_CONFIDENCE.length;i++) {
 				System.out.println("\n" + totalTestWords[i]+ "\nACTUAL:" + Arrays.toString(NEW_WORDS_CONFIDENCE[i])+"\nPREDICTION BY COMPUTER:");
 				a.predict(HOWCORRECT[i], NEW_WORDS_CONFIDENCE[i][0],true);
